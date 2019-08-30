@@ -18,11 +18,11 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let progressBar1 = ProgressBarView(animated: false, width: progressBar1View.frame.width, height: progressBar1View.frame.height, percent: 0.5)
+        let progressBar1 = ProgressBarView(animated: false, width: progressBar1View.frame.width, height: progressBar1View.frame.height, percent: 0.25, color: .blue)
         
-        let progressBar2 = ProgressBarView(animated: true, width: progressBar2View.frame.width, height: progressBar2View.frame.height, percent: 1)
+        let progressBar2 = ProgressBarView(animated: true, width: progressBar2View.frame.width, height: progressBar2View.frame.height, percent: 0.75, color: .green)
       
-        let progressBar3 = ProgressBarView(animated: false, width: progressBar3View.frame.width, height: progressBar3View.frame.height, percent: 0.25)
+        let progressBar3 = ProgressBarView(animated: false, width: progressBar3View.frame.width, height: progressBar3View.frame.height, percent: 0.5, color: .red)
         
         // add shape layer to view
         progressBar1View.addSubview(progressBar1)

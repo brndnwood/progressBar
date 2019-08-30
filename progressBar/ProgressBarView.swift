@@ -10,6 +10,10 @@ import UIKit
 
 class ProgressBarView: UIView {
 
+    var timer = Timer()
+    
+    var percentLabel = UILabel()
+
     var lineLayer = CAShapeLayer()
     var trackLayer = CAShapeLayer()
 
@@ -27,14 +31,16 @@ class ProgressBarView: UIView {
     var height : CGFloat = 0
     var percent : CGFloat = 0
     var animated : Bool = false
+    var color : UIColor = .blue
     
     
-    required init(animated: Bool, width: CGFloat, height: CGFloat, percent: CGFloat) {
+    required init(animated: Bool, width: CGFloat, height: CGFloat, percent: CGFloat, color: UIColor) {
         super.init(frame: .zero)
         self.width = width - padding
         self.height = height
         self.percent = percent
         self.animated = animated
+        self.color = color
         drawLine()
     }
     
@@ -66,7 +72,7 @@ class ProgressBarView: UIView {
         
         // set line attributes
         lineLayer.lineWidth = 10
-        lineLayer.strokeColor = UIColor.blue.cgColor
+        lineLayer.strokeColor = color.cgColor
         lineLayer.lineCap = .round
         
         if (animated) {
@@ -87,7 +93,7 @@ class ProgressBarView: UIView {
         self.layer.addSublayer(lineLayer)
 
         
-        var percentLabel = UILabel(frame: CGRect(x: padding, y: self.height/2, width: 100, height: 50))
+        percentLabel = UILabel(frame: CGRect(x: padding, y: self.height/2, width: 100, height: 50))
         percentLabel.text = String(format: "%.0f", self.percent*100) + "%"
         percentLabel.textAlignment = .left
         percentLabel.font = .systemFont(ofSize: 30.0, weight: .bold)
@@ -95,26 +101,49 @@ class ProgressBarView: UIView {
         self.addSubview(percentLabel)
         
         
-        
         if (animated) {
-            // tell it to animate the strokeEnd attribute
-            let basicAnimationLine = CABasicAnimation(keyPath: "strokeEnd")
-
-            // animate strokeEnd all the way around to starting point for 2 seconds
-            basicAnimationLine.toValue = percent
-            basicAnimationLine.duration = 0.5
-            
-            // keep the animation on screen when complete
-            basicAnimationLine.isRemovedOnCompletion = false
-            basicAnimationLine.fillMode = .forwards
-
-            // add the animation to the shape layer
-            lineLayer.add(basicAnimationLine, forKey: "blah")
+            percentLabel.text = String(format: "%.0f", 0) + "%"
+            timer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(updateBar), userInfo: nil, repeats: true)
         }
+        
+        
+        
+//        if (animated) {
+//            // tell it to animate the strokeEnd attribute
+//            let basicAnimationLine = CABasicAnimation(keyPath: "strokeEnd")
+//
+//            // animate strokeEnd all the way around to starting point for 2 seconds
+//            basicAnimationLine.toValue = percent
+//            basicAnimationLine.duration = 0.5
+//
+//            // keep the animation on screen when complete
+//            basicAnimationLine.isRemovedOnCompletion = false
+//            basicAnimationLine.fillMode = .forwards
+//
+//            // add the animation to the shape layer
+//            lineLayer.add(basicAnimationLine, forKey: "blah")
+//        }
     }
     
     
-    
+    @objc func updateBar() {
+        let nextStrokeValue = lineLayer.strokeEnd + 0.05
+        
+//        let percentage = ((100 * lineLayer.strokeEnd)/100)
+        let percentage = ((100 * nextStrokeValue)/100)
+        print(percentage)
+        
+        if (percentage >= self.percent) {
+            self.timer.invalidate()
+            lineLayer.strokeEnd = self.percent
+            percentLabel.text = String(format: "%.0f", self.percent*100) + "%"
+        } else {
+            lineLayer.strokeEnd = nextStrokeValue
+            percentLabel.text = String(format: "%.0f", percentage*100) + "%"
+        }
+        
+
+    }
 
 
 }
